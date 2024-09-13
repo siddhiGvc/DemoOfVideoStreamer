@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image and Video Display</title>
+  <style>
+    .container {
+     
+      overflow: auto;
+      height: 100vh;
+     
+     
+    }
+    .subContainer {
+     
+        height: 45vh;
+        padding-top: 5px;
+        padding-left: 2px;
+        margin-top: -20px;
+      }
+
+      #mediaContainer{
+        height: 100vh;
+     
+      
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        padding-top: 10px;
+        padding-left: 2px;
+        margin-top: -20px;
+
+      }
+  
+
+
+    .media {
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    #errMsg{
+        width: 100%;
+        height: 110vh; 
+        display: flex; 
+        text-align: center;
+        justify-content: center; 
+        align-content: center; 
+        background-color: #3b82f6
+
+    }
+  </style>
+</head>
+<body>
+   
+    <div id="container">
+        <div id="errMsg" style="display:none">
+            <h1 style="color:white;">Something went wrong!</h1>
+          
+          </div>
+          <div  id="mediaContainer">
+
+          </div>
+      
+    </div>
+  
+    <script>
+      const mediaData = [
+        {
+          imageUrl: 'https://th.bing.com/th/id/OIP.pdfFhhpDtb1wiuMMXpcXTwHaDt?rs=1&pid=ImgDetMain',
+          videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        },
+        {
+          imageUrl: 'https://th.bing.com/th/id/OIP.pdfFhhpDtb1wiuMMXpcXTwHaDt?rs=1&pid=ImgDetMain',
+          videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+        },
+        {
+            imageUrl: 'https://th.bing.com/th/id/OIP.pdfFhhpDtb1wiuMMXpcXTwHaDt?rs=1&pid=ImgDetMain',
+            videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          },
+          {
+            imageUrl: 'https://th.bing.com/th/id/OIP.pdfFhhpDtb1wiuMMXpcXTwHaDt?rs=1&pid=ImgDetMain',
+            videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          },
+          {
+            imageUrl: 'https://th.bing.com/th/id/OIP.pdfFhhpDtb1wiuMMXpcXTwHaDt?rs=1&pid=ImgDetMain',
+            videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          },
+          {
+            imageUrl: 'https://th.bing.com/th/id/OIP.pdfFhhpDtb1wiuMMXpcXTwHaDt?rs=1&pid=ImgDetMain',
+            videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          },
+        // Add more objects for additional subContainers
+      ];
+  
+      const mediaContainer = document.getElementById('mediaContainer');
+  
+      mediaData.forEach((media, index) => {
+        const subContainer = document.createElement('div');
+        subContainer.classList.add('subContainer');
+  
+        subContainer.innerHTML = `
+          <div id="imageContainer${index}" class="media" tabindex="0">
+            <img 
+              src="${media.imageUrl}" 
+              alt="img" 
+              width="100%" 
+              height="100%" 
+            />
+          </div>
+          <div id="videoContainer${index}" style="display: none; height:100%;">
+            <video id="videoPlayer${index}" style="width: 100%; height:100%;" controls>
+              <source src="${media.videoUrl}" type="video/mp4" />
+              <track src="path-to-your-captions.vtt" kind="captions" srcLang="en" label="English">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        `;
+  
+        mediaContainer.appendChild(subContainer);
+  
+        // Get the image and video containers
+        const imageContainer = document.getElementById(`imageContainer${index}`);
+        const videoContainer = document.getElementById(`videoContainer${index}`);
+        const videoPlayer = document.getElementById(`videoPlayer${index}`);
+  
+        // Function to handle image click
+        function handleClick() {
+          imageContainer.style.display = 'none';  // Hide the image
+          videoContainer.style.display = 'block'; // Show the video
+          videoPlayer.play();                     // Start video playback
+        }
+  
+        // Attach event listener to image container
+        imageContainer.addEventListener('click', handleClick);
+        imageContainer.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleClick();
+          }
+        });
+  
+        // Function to handle video end event
+        videoPlayer.addEventListener('ended', function () {
+          videoContainer.style.display = 'none';  // Hide the video
+          imageContainer.style.display = 'block'; // Show the image again
+        });
+      });
+
+
+       // Function to set error message in the DOM
+    function setError(hasError) {
+        const errorDisplay = document.getElementById('errMsg');
+        const mediaContainer = document.getElementById('mediaContainer');
+        if (hasError) {
+          errorDisplay.style.display = 'block';
+          mediaContainer.style.display='none';
+        } else {
+          errorDisplay.style.display = 'none';
+          mediaContainer.style.display='';
+        }
+      }
+  
+      // Function to fetch serial ports data
+      const getSerialPorts = async () => {
+        try {
+          const headers = new Headers({
+            'x-token': sessionStorage.getItem('token'), // Retrieve token from sessionStorage
+          });
+  
+          const response = await fetch(`http://localhost:7000/SerialPort/getSerialPorts`, {
+            method: 'GET',
+            headers,
+          });
+  
+          const json = await response.json();
+          setError(false); // No error, data is fetched successfully
+          return json.data; // Return data from the response
+        } catch (error) {
+          setError(true); // Set error to true
+          console.error('Error fetching data:', error);
+          return [];
+        }
+      };
+  
+      // Function to update the DOM with the fetched serial ports data
+      function updateSerialPorts(data) {
+        const serialDataElement = document.getElementById('serialData');
+        const value1DisplayElement = document.getElementById('value1Display');
+  
+        // Set the serialized data and value1 in the DOM
+        serialDataElement.textContent = JSON.stringify(data, null, 2); // Pretty print JSON data
+        value1DisplayElement.textContent = `Value 1: ${data.value1 || 'N/A'}`; // Update value1
+        const value=localStorage.getItem("VideoValue");
+        if(value!=data.value1)
+        {
+        if(data.value1=="1")
+        { 
+            localStorage.setItem("VideoValue",data.value1);
+            imageContainer0.style.display = 'none';  // Hide the image
+            videoContainer0.style.display = 'block';
+            document.getElementById(`videoPlayer0`).play();
+        }
+        if(data.value1=="2")
+        {
+            localStorage.setItem("VideoValue",data.value1);
+            imageContainer1.style.display = 'none';  // Hide the image
+            videoContainer1.style.display = 'block';
+            document.getElementById(`videoPlayer1`).play();
+        }
+        if(data.value1=="3")
+        { 
+            localStorage.setItem("VideoValue",data.value1);
+            imageContainer2.style.display = 'none';  // Hide the image
+            videoContainer2.style.display = 'block';
+            document.getElementById(`videoPlayer2`).play();
+        }
+        if(data.value1=="4")
+        {
+            localStorage.setItem("VideoValue",data.value1);
+            imageContainer3.style.display = 'none';  // Hide the image
+            videoContainer3.style.display = 'block';
+            document.getElementById(`videoPlayer3`).play();
+        }
+        if(data.value1=="5")
+        {
+            localStorage.setItem("VideoValue",data.value1);
+            imageContainer4.style.display = 'none';  // Hide the image
+            videoContainer4.style.display = 'block';
+            document.getElementById(`videoPlayer4`).play();
+        }
+        if(data.value1=="6")
+        {
+            localStorage.setItem("VideoValue",data.value1);
+            imageContainer5.style.display = 'none';  // Hide the image
+            videoContainer5.style.display = 'block';
+            document.getElementById(`videoPlayer5`).play();
+        }
+        else {
+            localStorage.setItem("VideoValue",data.value1);
+            imageContainer2.style.display = 'none';  // Hide the image
+            videoContainer2.style.display = 'block';
+            document.getElementById(`videoPlayer2`).play();
+        }
+        }
+      }
+  
+      // Function to periodically fetch and update data
+      const startFetchingSerialPorts = () => {
+        getSerialPorts().then((res) => {
+          updateSerialPorts(res);
+        });
+  
+        // Poll the server every 1 second
+        const intervalId = setInterval(() => {
+          getSerialPorts().then((res) => {
+            updateSerialPorts(res);
+          });
+        }, 1000);
+  
+        // Clear the interval when no longer needed
+        return () => clearInterval(intervalId);
+      };
+  
+      // Start fetching data when the page loads
+      window.addEventListener('DOMContentLoaded', () => {
+        const stopFetching = startFetchingSerialPorts();
+  
+        // Clean up the interval when the window unloads
+        window.addEventListener('beforeunload', stopFetching);
+      });
+    </script>
+  </body>
+  
+</html>
