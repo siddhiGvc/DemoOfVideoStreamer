@@ -5,7 +5,7 @@ function createWindow() {
 
 
   const primaryDisplay = screen.getPrimaryDisplay();
-  const { width, height } = primaryDisplay.workAreaSize; // Use workAreaSize to exclude taskbar
+  const { width, height } = primaryDisplay.size; // Use workAreaSize to exclude taskbar
   const win = new BrowserWindow({
     width: width,
     height: height,
