@@ -9,11 +9,14 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'), // Optional, for security or additional settings
       nodeIntegration: true,
     },
+    fullscreen: true,
+    autoHideMenuBar: true,
   });
 
   // Load a local HTML file or a remote URL (e.g., your web app)
 //   win.loadURL('index.html'); // Replace with your web app URL or local file
    win.loadFile(path.join(__dirname, 'index.html'));
+
 
 }
 
