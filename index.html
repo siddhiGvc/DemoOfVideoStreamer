@@ -53,11 +53,11 @@
   </style>
 </head>
 <body>
-  <div id="serialDataContainer" style="visibility: hidden;">
+  <!-- <div id="serialDataContainer" style="visibility: hidden;">
     <h3>Serial Port Data</h3>
     <pre id="serialData">Fetching data...</pre>
     <p id="value1Display">Value 1: </p>
-  </div>
+  </div> -->
     <div id="container">
         <div id="errMsg" style="display:none">
             <h1 style="color:white;">Something went wrong!</h1>
@@ -190,12 +190,12 @@
   
       // Function to update the DOM with the fetched serial ports data
       function updateSerialPorts(data) {
-        const serialDataElement = document.getElementById('serialData');
-        const value1DisplayElement = document.getElementById('value1Display');
+        //const serialDataElement = document.getElementById('serialData');
+        //const value1DisplayElement = document.getElementById('value1Display');
   
         // Set the serialized data and value1 in the DOM
-        serialDataElement.textContent = JSON.stringify(data, null, 2); // Pretty print JSON data
-        value1DisplayElement.textContent = `Value 1: ${data.value1 || 'N/A'}`; // Update value1
+        //serialDataElement.textContent = JSON.stringify(data, null, 2); // Pretty print JSON data
+        //value1DisplayElement.textContent = `Value 1: ${data.value1 || 'N/A'}`; // Update value1
         const value=localStorage.getItem("VideoValue");
         if(value!=data.value1)
         {
