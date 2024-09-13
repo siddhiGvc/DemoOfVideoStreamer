@@ -16,6 +16,14 @@ function createWindow() {
   // Load a local HTML file or a remote URL (e.g., your web app)
 //   win.loadURL('index.html'); // Replace with your web app URL or local file
    win.loadFile(path.join(__dirname, 'index.html'));
+   win.once('ready-to-show', () => {
+    win.setFullScreen(true); // Simulate full-screen on startup
+  });
+
+  // Register F11 key for toggling full-screen mode
+  globalShortcut.register('F11', () => {
+    win.setFullScreen(!win.isFullScreen()); // Toggle full-screen mode
+  });
 
 
 }
