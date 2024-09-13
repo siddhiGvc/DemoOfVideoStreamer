@@ -1,10 +1,14 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow,screen } = require('electron');
 const path = require('path');
 
 function createWindow() {
+
+
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize; // Use workAreaSize to exclude taskbar
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: width,
+    height: height,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'), // Optional, for security or additional settings
       nodeIntegration: true,
